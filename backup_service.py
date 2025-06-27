@@ -6,6 +6,7 @@ import traceback
 import psycopg2
 import pymysql
 from configparser import ConfigParser
+import platform
 
 class DatabaseBackupService:
     def __init__(self):
@@ -74,7 +75,11 @@ class DatabaseBackupService:
 
     def _find_tool(self, tool_name):
         try:
-            return subprocess.check_output(['which', tool_name]).decode('utf-8').strip()
+            if platform.system() == 'Windows':
+                cmd = ['where', tool_name]
+            else:
+                cmd = ['which', tool_name]
+            return subprocess.check_output(cmd).decode('utf-8').strip()
         except subprocess.CalledProcessError:
             return None
 
